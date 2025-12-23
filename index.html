@@ -337,7 +337,7 @@
 </head>
 <body>
 
-    <!-- Background Music - Upload your MP3 file as "christmas-bg.mp3" in the same folder -->
+    <!-- Background Music - File must be named exactly "christmas-bg.mp3" in the same folder -->
     <audio id="bg-music" loop preload="auto">
         <source src="christmas-bg.mp3" type="audio/mpeg">
     </audio>
@@ -377,7 +377,6 @@
             <p>If my soul still yearns for you</p>
             <p>You mean a lot to me sursji</p>
             <div class="heart">💕</div>
-            <!-- "meri jaan" line removed as requested -->
         </div>
     </section>
 
@@ -412,7 +411,7 @@
             const confCtx = confettiCanvas.getContext('2d');
             const fwCtx = fireworksCanvas.getContext('2d');
 
-            const bgMusic = document.getElementById('bg-music');  // Music element
+            const bgMusic = document.getElementById('bg-music');
 
             let taps = 0;
             const maxTaps = 8;
@@ -433,7 +432,7 @@
                 "aapko bhot miss krte hai ji 🙄🤙🏻"
             ];
 
-            // Snow (lightweight)
+            // Snow
             const snowflakes = [];
             for (let i = 0; i < 40; i++) {
                 snowflakes.push({
@@ -457,7 +456,7 @@
                 requestAnimationFrame(drawSnow);
             }
 
-            // Fireworks (reduced)
+            // Fireworks
             const fireworks = [];
             function launchFirework() {
                 const fw = {
@@ -500,7 +499,7 @@
                 if (fireworks.length > 0) requestAnimationFrame(drawFireworks);
             }
 
-            // Confetti (reduced)
+            // Confetti
             const confetti = [];
             function launchConfetti() {
                 for (let i = 0; i < 80; i++) {
@@ -549,6 +548,7 @@
                 setTimeout(updateCountdown, 1000);
             }
 
+            // Intro animation
             setTimeout(() => {
                 ready.textContent = "Ready for a surprise?";
                 ready.style.opacity = 1;
@@ -602,11 +602,19 @@
                 });
             }
 
-            document.body.addEventListener('click', function handler(e) {
-                // Start music on first tap (works on mobile too)
-                if (bgMusic && bgMusic.paused) {
-                    bgMusic.play().catch(() => {});
+            // Safe music play function
+            function playMusic() {
+                if (bgMusic) {
+                    bgMusic.volume = 0.3; // Soft background
+                    bgMusic.play().catch(() => {
+                        // Silent fail - normal on first load
+                    });
                 }
+            }
+
+            // Main click handler
+            document.body.addEventListener('click', function handler(e) {
+                playMusic(); // Try every tap
 
                 if (stage === 'intro') {
                     introSection.classList.remove('active');
@@ -650,11 +658,14 @@
 
                                 messageSection.style.opacity = '0';
                                 setTimeout(() => { messageSection.style.display = 'none'; }, 2200);
-                            }, 20000);
+                            }, 20000); // 20 seconds message
                         }, 1000);
                     }
                 }
             });
+
+            // Extra attempt after load
+            setTimeout(playMusic, 1500);
 
             window.addEventListener('resize', () => {
                 snowCanvas.width = confettiCanvas.width = fireworksCanvas.width = window.innerWidth;
@@ -663,4 +674,4 @@
         };
     </script>
 </body>
-  </html>
+</html>
